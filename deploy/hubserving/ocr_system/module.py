@@ -142,7 +142,26 @@ class OCRSystem(hub.Module):
         """
         images_decode = [base64_to_cv2(image) for image in images]
         results = self.predict(images_decode, **kwargs)
-        return results
+        line = results[0]
+        time2 = ""
+        day = ""
+        health = ""
+        for i in range(len(line)):
+            text = line[i]["text"]
+            t1=text.count(":")
+            t2=text.count("：")
+            t3=t1+t2
+            d1=text.count("-")
+            d2=text.count("——")
+            d3=d1+d2
+            if t3==2:
+                time2 = text
+            if d3==2:
+                day = text
+            if text.startswith('黄码') or text.startswith('绿码') or text.startswith('红码'):
+                health = text[0:2]
+        ans=[[{"Day":day},{"Time":time2},{"Health":health}]]
+        return ans
 
 
 if __name__ == '__main__':
